@@ -1,0 +1,2889 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f7f5f0">
+    <title>FitMatch AI｜智慧穿搭助理</title>
+
+    <style>
+        /* ==============================
+           1. 全域設定與配色
+        ============================== */
+        :root {
+            --bg: #f7f5f0;
+            --surface: #ffffff;
+            --text: #25251f;
+            --muted: #85847c;
+            --primary: #4c6047;
+            --primary-dark: #344631;
+            --primary-light: #e8ede4;
+            --accent: #d9b89a;
+            --border: #eae8e1;
+            --danger: #bd5555;
+            --radius: 22px;
+            --shadow: 0 8px 30px rgba(40, 45, 34, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 100px;
+        }
+
+        body {
+            margin: 0;
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                "Noto Sans TC",
+                "Microsoft JhengHei",
+                sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        button:focus-visible,
+        input:focus-visible,
+        select:focus-visible {
+            outline: 3px solid rgba(76, 96, 71, 0.25);
+            outline-offset: 3px;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .container {
+            width: min(1120px, calc(100% - 40px));
+            margin: 0 auto;
+        }
+
+        .section {
+            padding: 42px 0;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .eyebrow {
+            margin: 0 0 6px;
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        h1,
+        h2,
+        h3,
+        p {
+            margin-top: 0;
+        }
+
+        h2 {
+            margin-bottom: 6px;
+            font-size: clamp(24px, 4vw, 32px);
+            line-height: 1.35;
+            letter-spacing: -0.8px;
+        }
+
+        .section-description {
+            margin-bottom: 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        /* ==============================
+           2. 導覽列
+        ============================== */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(247, 245, 240, 0.94);
+            border-bottom: 1px solid rgba(234, 232, 225, 0.85);
+            backdrop-filter: blur(16px);
+        }
+
+        .nav-inner {
+            min-height: 76px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            color: var(--text);
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            background: var(--primary);
+            color: white;
+            border-radius: 14px;
+            font-size: 21px;
+        }
+
+        .brand-name {
+            display: block;
+            font-size: 18px;
+            font-weight: 850;
+            letter-spacing: -0.6px;
+            line-height: 1.3;
+        }
+
+        .brand-subtitle {
+            display: block;
+            margin-top: 3px;
+            color: var(--muted);
+            font-size: 10px;
+            letter-spacing: 1.6px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links a {
+            padding: 9px 14px;
+            border-radius: 12px;
+            color: #64645c;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 650;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-dark);
+            background: var(--primary-light);
+        }
+
+        .nav-links .nav-cta {
+            color: white;
+            background: var(--primary);
+        }
+
+        .nav-links .nav-cta:hover {
+            background: var(--primary-dark);
+            color: white;
+        }
+
+        /* ==============================
+           3. 首頁 Hero
+        ============================== */
+        .hero {
+            padding: 48px 0 24px;
+        }
+
+        .hero-card {
+            position: relative;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            align-items: center;
+            min-height: 350px;
+            padding: clamp(28px, 5vw, 58px);
+            background: #e9e8dd;
+            border-radius: 30px;
+        }
+
+        .hero-copy {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            margin-bottom: 22px;
+            padding: 7px 12px;
+            color: var(--primary-dark);
+            background: rgba(255, 255, 255, 0.72);
+            border: 1px solid rgba(76, 96, 71, 0.12);
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 750;
+        }
+
+        .hero h1 {
+            margin-bottom: 18px;
+            font-size: clamp(35px, 5vw, 56px);
+            line-height: 1.2;
+            letter-spacing: -2px;
+        }
+
+        .hero h1 span {
+            color: var(--primary);
+        }
+
+        .hero-description {
+            max-width: 430px;
+            margin-bottom: 27px;
+            color: #696b60;
+            font-size: 15px;
+            line-height: 1.9;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .hero-visual {
+            position: relative;
+            display: grid;
+            place-items: center;
+            min-height: 260px;
+        }
+
+        .visual-circle {
+            position: absolute;
+            width: 255px;
+            height: 255px;
+            border-radius: 50%;
+            background: #d7d9ca;
+        }
+
+        .visual-card {
+            position: relative;
+            z-index: 1;
+            width: 205px;
+            padding: 18px;
+            background: rgba(255, 255, 255, 0.88);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            border-radius: 24px;
+            box-shadow: 0 18px 50px rgba(48, 57, 39, 0.13);
+            transform: rotate(4deg);
+        }
+
+        .visual-outfit {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 9px;
+            margin-bottom: 12px;
+        }
+
+        .visual-item {
+            display: grid;
+            place-items: center;
+            min-height: 116px;
+            border-radius: 15px;
+            font-size: 51px;
+        }
+
+        .visual-item:first-child {
+            background: #e9e3d7;
+        }
+
+        .visual-item:last-child {
+            background: #e0e5db;
+        }
+
+        .visual-caption {
+            margin: 0;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .visual-caption small {
+            display: block;
+            margin-top: 3px;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .floating-tag {
+            position: absolute;
+            z-index: 2;
+            padding: 10px 14px;
+            background: white;
+            border-radius: 14px;
+            box-shadow: var(--shadow);
+            font-size: 12px;
+            font-weight: 750;
+        }
+
+        .floating-tag.top {
+            top: 18px;
+            right: 0;
+            transform: rotate(5deg);
+        }
+
+        .floating-tag.bottom {
+            bottom: 15px;
+            left: 0;
+            transform: rotate(-5deg);
+        }
+
+        /* ==============================
+           4. 按鈕
+        ============================== */
+        .btn {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            min-height: 44px;
+            padding: 11px 18px;
+            border: 1px solid transparent;
+            border-radius: 13px;
+            font-size: 13px;
+            font-weight: 750;
+            text-decoration: none;
+            transition:
+                transform 0.2s,
+                background 0.2s,
+                border-color 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            color: white;
+            background: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            color: var(--text);
+            background: white;
+            border-color: var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: #f9f8f5;
+            border-color: #d5d9ce;
+        }
+
+        .btn-small {
+            min-height: 35px;
+            padding: 7px 11px;
+            font-size: 12px;
+            border-radius: 10px;
+        }
+
+        .btn-danger {
+            color: var(--danger);
+            background: #fff3f2;
+            border-color: #f5ddda;
+        }
+
+        /* ==============================
+           5. 統計卡片
+        ============================== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 22px;
+        }
+
+        .stat-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 19px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 19px;
+        }
+
+        .stat-icon {
+            display: grid;
+            place-items: center;
+            width: 46px;
+            height: 46px;
+            flex-shrink: 0;
+            background: var(--primary-light);
+            border-radius: 14px;
+            font-size: 21px;
+        }
+
+        .stat-value {
+            display: block;
+            font-size: 23px;
+            font-weight: 850;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            display: block;
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        /* ==============================
+           6. 通用卡片
+        ============================== */
+        .panel {
+            padding: clamp(20px, 3vw, 30px);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        /* ==============================
+           7. 穿搭推薦表單
+        ============================== */
+        .recommend-layout {
+            display: grid;
+            grid-template-columns: 0.8fr 1.2fr;
+            gap: 22px;
+            align-items: start;
+        }
+
+        .form-title {
+            margin-bottom: 22px;
+            font-size: 18px;
+            font-weight: 850;
+        }
+
+        .form-group {
+            margin-bottom: 19px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            font-weight: 750;
+        }
+
+        .field-hint {
+            display: block;
+            margin-top: 6px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .form-control {
+            width: 100%;
+            min-height: 46px;
+            padding: 11px 13px;
+            color: var(--text);
+            background: #fbfaf8;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(76, 96, 71, 0.08);
+        }
+
+        .form-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        .form-actions .btn {
+            width: 100%;
+        }
+
+        .result-panel {
+            min-height: 430px;
+            background: #fbfaf7;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+        }
+
+        .result-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 19px;
+        }
+
+        .result-top h3 {
+            margin: 0;
+            font-size: 17px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 10px;
+            color: var(--primary);
+            background: var(--primary-light);
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .result-hero {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 19px;
+        }
+
+        .outfit-piece {
+            min-width: 0;
+            padding: 17px 7px;
+            text-align: center;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 17px;
+        }
+
+        .piece-emoji {
+            display: grid;
+            place-items: center;
+            min-height: 74px;
+            margin-bottom: 8px;
+            font-size: 44px;
+        }
+
+        .piece-label {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .piece-name {
+            display: block;
+            font-size: 12px;
+            font-weight: 800;
+            line-height: 1.5;
+            overflow-wrap: anywhere;
+        }
+
+        .outfit-name {
+            margin-bottom: 8px;
+            font-size: 21px;
+            font-weight: 850;
+        }
+
+        .outfit-description {
+            margin-bottom: 16px;
+            color: #73736b;
+            font-size: 13px;
+            line-height: 1.9;
+        }
+
+        .tip-box {
+            padding: 14px 15px;
+            margin-bottom: 19px;
+            background: #edf0e8;
+            border-radius: 14px;
+        }
+
+        .tip-title {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--primary-dark);
+            font-size: 12px;
+            font-weight: 850;
+        }
+
+        .tip-text {
+            margin: 0;
+            color: #61675a;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .result-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+        }
+
+        .empty-result {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 330px;
+            text-align: center;
+        }
+
+        .empty-result .empty-icon {
+            display: grid;
+            place-items: center;
+            width: 82px;
+            height: 82px;
+            margin-bottom: 16px;
+            background: #eeece4;
+            border-radius: 25px;
+            font-size: 39px;
+        }
+
+        .empty-result h3 {
+            margin-bottom: 8px;
+            font-size: 17px;
+        }
+
+        .empty-result p {
+            max-width: 260px;
+            margin-bottom: 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        /* ==============================
+           8. 衣櫃與收藏
+        ============================== */
+        .wardrobe-layout {
+            display: grid;
+            grid-template-columns: 0.75fr 1.25fr;
+            gap: 22px;
+            align-items: start;
+        }
+
+        .closet-form {
+            padding: 22px;
+            background: #f0efe7;
+            border-radius: 19px;
+        }
+
+        .closet-form h3 {
+            margin-bottom: 18px;
+            font-size: 17px;
+        }
+
+        .closet-list,
+        .favorites-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 13px;
+        }
+
+        .closet-item {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            min-width: 0;
+            padding: 13px;
+            background: #fbfaf8;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+        }
+
+        .closet-item-icon {
+            display: grid;
+            place-items: center;
+            width: 43px;
+            height: 43px;
+            flex-shrink: 0;
+            background: white;
+            border-radius: 12px;
+            font-size: 23px;
+        }
+
+        .closet-item-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .closet-item-name {
+            margin-bottom: 3px;
+            font-size: 12px;
+            font-weight: 800;
+            overflow-wrap: anywhere;
+        }
+
+        .closet-item-category {
+            margin: 0;
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .closet-item .delete-btn {
+            padding: 5px;
+            color: var(--muted);
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .closet-item .delete-btn:hover {
+            color: var(--danger);
+            background: #fff0ee;
+        }
+
+        .list-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .list-toolbar h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .count-badge {
+            padding: 5px 10px;
+            color: var(--primary);
+            background: var(--primary-light);
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            padding: 35px 16px;
+            text-align: center;
+            color: var(--muted);
+            background: #fbfaf8;
+            border: 1px dashed #dcd9cf;
+            border-radius: 16px;
+        }
+
+        .empty-state .empty-icon {
+            margin-bottom: 8px;
+            font-size: 31px;
+        }
+
+        .empty-state p {
+            margin: 0;
+            font-size: 12px;
+        }
+
+        /* 收藏卡片 */
+        .favorite-card {
+            overflow: hidden;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .favorite-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+
+        .favorite-visual {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            padding: 15px;
+            background: #efeee7;
+        }
+
+        .favorite-visual-piece {
+            display: grid;
+            place-items: center;
+            min-height: 75px;
+            background: rgba(255, 255, 255, 0.75);
+            border-radius: 11px;
+            font-size: 30px;
+        }
+
+        .favorite-body {
+            padding: 16px;
+        }
+
+        .favorite-title {
+            margin-bottom: 7px;
+            font-size: 14px;
+            font-weight: 850;
+            overflow-wrap: anywhere;
+        }
+
+        .favorite-meta {
+            margin-bottom: 13px;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.8;
+        }
+
+        .favorite-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        /* ==============================
+           9. 使用說明
+        ============================== */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .info-card {
+            padding: 23px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+        }
+
+        .info-number {
+            display: grid;
+            place-items: center;
+            width: 42px;
+            height: 42px;
+            margin-bottom: 17px;
+            color: var(--primary);
+            background: var(--primary-light);
+            border-radius: 13px;
+            font-weight: 850;
+        }
+
+        .info-card h3 {
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+        .info-card p {
+            margin-bottom: 0;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.9;
+        }
+
+        /* ==============================
+           10. Toast 通知
+        ============================== */
+        .toast {
+            position: fixed;
+            right: 24px;
+            bottom: 24px;
+            z-index: 999;
+            max-width: calc(100% - 48px);
+            padding: 14px 19px;
+            color: white;
+            background: #303b2c;
+            border-radius: 14px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.15);
+            font-size: 13px;
+            font-weight: 650;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(12px);
+            transition: opacity 0.25s, transform 0.25s;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast.error {
+            background: #a94444;
+        }
+
+        /* ==============================
+           11. 頁尾
+        ============================== */
+        .footer {
+            margin-top: 25px;
+            padding: 30px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .footer p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .footer strong {
+            color: var(--primary);
+        }
+
+        /* ==============================
+           12. 響應式設計
+        ============================== */
+        @media (max-width: 850px) {
+            .hero-card {
+                grid-template-columns: 1fr 0.7fr;
+                padding: 30px;
+            }
+
+            .hero-visual {
+                transform: scale(0.85);
+            }
+
+            .recommend-layout,
+            .wardrobe-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .closet-list {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .nav-links {
+                gap: 2px;
+            }
+
+            .nav-links a {
+                padding: 8px 9px;
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                width: calc(100% - 28px);
+            }
+
+            .nav-inner {
+                min-height: 66px;
+                flex-wrap: wrap;
+                gap: 4px;
+                padding: 10px 0;
+            }
+
+            .brand-icon {
+                width: 37px;
+                height: 37px;
+                border-radius: 12px;
+            }
+
+            .brand-name {
+                font-size: 16px;
+            }
+
+            .brand-subtitle {
+                font-size: 9px;
+            }
+
+            .nav-links {
+                width: 100%;
+                overflow-x: auto;
+                padding-bottom: 2px;
+            }
+
+            .nav-links a {
+                flex-shrink: 0;
+                padding: 7px 10px;
+            }
+
+            .hero {
+                padding-top: 22px;
+            }
+
+            .hero-card {
+                grid-template-columns: 1fr;
+                padding: 28px 23px 15px;
+                border-radius: 24px;
+            }
+
+            .hero h1 {
+                font-size: 39px;
+            }
+
+            .hero-description {
+                font-size: 13px;
+            }
+
+            .hero-visual {
+                min-height: 260px;
+                transform: scale(0.9);
+                margin-top: 5px;
+            }
+
+            .stats-grid {
+                gap: 8px;
+            }
+
+            .stat-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                padding: 13px;
+                border-radius: 15px;
+            }
+
+            .stat-icon {
+                width: 36px;
+                height: 36px;
+                border-radius: 11px;
+                font-size: 17px;
+            }
+
+            .stat-value {
+                font-size: 21px;
+            }
+
+            .stat-label {
+                font-size: 10px;
+            }
+
+            .section {
+                padding: 30px 0;
+            }
+
+            .section-heading {
+                align-items: flex-start;
+                flex-direction: column;
+                margin-bottom: 19px;
+            }
+
+            .panel {
+                padding: 18px;
+                border-radius: 19px;
+            }
+
+            .result-panel {
+                padding: 16px;
+            }
+
+            .result-hero {
+                gap: 6px;
+            }
+
+            .outfit-piece {
+                padding: 12px 5px;
+                border-radius: 13px;
+            }
+
+            .piece-emoji {
+                min-height: 61px;
+                font-size: 35px;
+            }
+
+            .piece-name {
+                font-size: 11px;
+            }
+
+            .closet-list,
+            .favorites-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .info-card {
+                padding: 19px;
+            }
+
+            .footer-inner {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .toast {
+                right: 14px;
+                bottom: 14px;
+                max-width: calc(100% - 28px);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ==============================
+         導覽列
+    ============================== -->
+    <header class="navbar">
+        <div class="container nav-inner">
+
+            <a class="brand" href="#home" aria-label="FitMatch AI 首頁">
+                <span class="brand-icon">✳</span>
+                <span>
+                    <span class="brand-name">FitMatch AI</span>
+                    <span class="brand-subtitle">YOUR DAILY STYLE PARTNER</span>
+                </span>
+            </a>
+
+            <nav class="nav-links" aria-label="主要導覽">
+                <a href="#home">首頁</a>
+                <a href="#recommend">穿搭推薦</a>
+                <a href="#wardrobe">我的衣櫃</a>
+                <a href="#favorites">我的收藏</a>
+                <a href="#recommend" class="nav-cta">開始搭配 ↗</a>
+            </nav>
+
+        </div>
+    </header>
+
+
+    <main>
+
+        <!-- ==============================
+             首頁主視覺
+        ============================== -->
+        <section class="hero" id="home">
+            <div class="container">
+
+                <div class="hero-card">
+
+                    <div class="hero-copy">
+
+                        <div class="hero-label">
+                            <span>✦</span>
+                            YOUR PERSONAL STYLE ASSISTANT
+                        </div>
+
+                        <h1>
+                            今天穿什麼？<br>
+                            <span>讓穿搭變簡單。</span>
+                        </h1>
+
+                        <p class="hero-description">
+                            從你的風格、今日氣溫到活動場合，
+                            找到適合自己的穿搭靈感。
+                            每一天，都可以穿出自己的樣子。
+                        </p>
+
+                        <div class="hero-actions">
+                            <a href="#recommend" class="btn btn-primary">
+                                ✨ 探索今日穿搭
+                            </a>
+
+                            <a href="#wardrobe" class="btn btn-secondary">
+                                👕 整理我的衣櫃
+                            </a>
+                        </div>
+
+                    </div>
+
+                    <div class="hero-visual" aria-label="穿搭示意圖">
+
+                        <div class="visual-circle"></div>
+
+                        <div class="floating-tag top">
+                            🌿 Find Your Style
+                        </div>
+
+                        <div class="visual-card">
+
+                            <div class="visual-outfit">
+                                <div class="visual-item">👕</div>
+                                <div class="visual-item">👖</div>
+                            </div>
+
+                            <p class="visual-caption">
+                                Today's Outfit
+                                <small>Simple · Comfortable · You</small>
+                            </p>
+
+                        </div>
+
+                        <div class="floating-tag bottom">
+                            ✨ 每一天都有新靈感
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- 統計數據 -->
+                <div class="stats-grid">
+
+                    <div class="stat-card">
+                        <div class="stat-icon">👕</div>
+                        <div>
+                            <span class="stat-value" id="statClothes">0</span>
+                            <span class="stat-label">我的衣櫃單品</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">❤️</div>
+                        <div>
+                            <span class="stat-value" id="statFavorites">0</span>
+                            <span class="stat-label">已收藏穿搭</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">✨</div>
+                        <div>
+                            <span class="stat-value">4</span>
+                            <span class="stat-label">探索穿搭風格</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ==============================
+             穿搭推薦
+        ============================== -->
+        <section class="section" id="recommend">
+            <div class="container">
+
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">OUTFIT GENERATOR</p>
+                        <h2>找到今天的命定穿搭</h2>
+                        <p class="section-description">
+                            選擇你的風格、場合與氣溫，開始探索穿搭靈感。
+                        </p>
+                    </div>
+                </div>
+
+
+                <div class="recommend-layout">
+
+                    <!-- 左側：使用者輸入 -->
+                    <div class="panel">
+
+                        <h3 class="form-title">🎨 自訂你的穿搭條件</h3>
+
+                        <form id="recommendForm">
+
+                            <div class="form-group">
+                                <label for="style">01. 今天想穿什麼風格？</label>
+
+                                <select class="form-control" id="style" required>
+                                    <option value="casual">☁️ 休閒風 Casual</option>
+                                    <option value="korean">🌿 韓系風 Korean</option>
+                                    <option value="minimal">◻️ 簡約風 Minimal</option>
+                                    <option value="street">⚡ 街頭風 Street</option>
+                                </select>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label for="occasion">02. 今天要去哪裡？</label>
+
+                                <select class="form-control" id="occasion" required>
+                                    <option value="school">📚 上課</option>
+                                    <option value="date">🌷 約會</option>
+                                    <option value="dining">🍽️ 朋友聚餐</option>
+                                    <option value="sport">🏃 運動</option>
+                                </select>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label for="temperature">03. 今天的氣溫是多少？</label>
+
+                                <input
+                                    class="form-control"
+                                    type="number"
+                                    id="temperature"
+                                    min="-30"
+                                    max="60"
+                                    step="1"
+                                    value="25"
+                                    placeholder="例如：25"
+                                    required
+                                >
+
+                                <span class="field-hint">
+                                    請輸入攝氏溫度（-30°C 至 60°C）。
+                                    本網站不會自動取得即時天氣。
+                                </span>
+                            </div>
+
+
+                            <div class="form-actions">
+
+                                <button type="submit" class="btn btn-primary">
+                                    ✨ 開始推薦
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="btn btn-secondary"
+                                    id="randomBtn"
+                                >
+                                    🎲 隨機穿搭
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+
+                    <!-- 右側：推薦結果 -->
+                    <div class="result-panel" id="resultPanel" aria-live="polite">
+
+                        <div class="empty-result">
+
+                            <div class="empty-icon">👔</div>
+
+                            <h3>你的專屬穿搭，即將登場</h3>
+
+                            <p>
+                                選擇左側的穿搭條件，
+                                按下開始推薦，看看今天有什麼新靈感。
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ==============================
+             我的衣櫃
+        ============================== -->
+        <section class="section" id="wardrobe">
+            <div class="container">
+
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">MY DIGITAL WARDROBE</p>
+                        <h2>打造你的數位衣櫃</h2>
+                        <p class="section-description">
+                            把你擁有的單品整理起來，讓每件衣服都有更多搭配可能。
+                        </p>
+                    </div>
+                </div>
+
+
+                <div class="wardrobe-layout">
+
+                    <!-- 新增衣物表單 -->
+                    <div class="closet-form">
+
+                        <h3>＋ 新增一件衣物</h3>
+
+                        <form id="closetForm">
+
+                            <div class="form-group">
+                                <label for="clothingName">衣物名稱</label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="clothingName"
+                                    maxlength="40"
+                                    placeholder="例如：米白色針織外套"
+                                    required
+                                >
+                            </div>
+
+
+                            <div class="form-group">
+                                <label for="clothingCategory">衣物類別</label>
+
+                                <select
+                                    class="form-control"
+                                    id="clothingCategory"
+                                    required
+                                >
+                                    <option value="top">👕 上衣</option>
+                                    <option value="pants">👖 褲子</option>
+                                    <option value="outerwear">🧥 外套</option>
+                                    <option value="shoes">👟 鞋子</option>
+                                    <option value="accessory">🧢 配件</option>
+                                </select>
+                            </div>
+
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary"
+                                style="width: 100%;"
+                            >
+                                ＋ 新增至我的衣櫃
+                            </button>
+
+                        </form>
+
+                        <p class="field-hint" style="margin-top: 13px;">
+                            小提醒：新增後可以隨時刪除，不喜歡的單品也能重新整理。
+                        </p>
+
+                    </div>
+
+
+                    <!-- 衣物清單 -->
+                    <div class="panel">
+
+                        <div class="list-toolbar">
+                            <h3>我的所有單品</h3>
+                            <span class="count-badge" id="closetCount">0 件單品</span>
+                        </div>
+
+                        <div class="closet-list" id="closetList">
+
+                            <div class="empty-state">
+                                <div class="empty-icon">🧺</div>
+                                <p>你的衣櫃還是空的，新增第一件衣物吧！</p>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ==============================
+             我的收藏
+        ============================== -->
+        <section class="section" id="favorites">
+            <div class="container">
+
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">YOUR STYLE COLLECTION</p>
+                        <h2>收藏你的穿搭靈感</h2>
+                        <p class="section-description">
+                            把喜歡的搭配保存下來，下次出門就不用重新煩惱。
+                        </p>
+                    </div>
+
+                    <span class="count-badge" id="favoriteCount">0 套收藏</span>
+                </div>
+
+
+                <div class="favorites-grid" id="favoritesList">
+
+                    <div class="empty-state">
+                        <div class="empty-icon">💌</div>
+                        <p>還沒有收藏任何穿搭，先去探索一套喜歡的搭配吧！</p>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ==============================
+             使用說明
+        ============================== -->
+        <section class="section">
+            <div class="container">
+
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">HOW IT WORKS</p>
+                        <h2>簡單三步驟，找到你的風格</h2>
+                        <p class="section-description">
+                            不需要複雜的操作，也能開始整理每天的穿搭靈感。
+                        </p>
+                    </div>
+                </div>
+
+
+                <div class="info-grid">
+
+                    <div class="info-card">
+                        <div class="info-number">01</div>
+                        <h3>選擇你的條件</h3>
+                        <p>
+                            根據個人喜好，選擇穿搭風格、活動場合與當天氣溫，
+                            讓推薦結果更符合你的需求。
+                        </p>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-number">02</div>
+                        <h3>探索搭配靈感</h3>
+                        <p>
+                            系統依照預先設計的穿搭規則產生服裝組合，
+                            也可以使用隨機功能發現不同搭配。
+                        </p>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-number">03</div>
+                        <h3>收藏你的最愛</h3>
+                        <p>
+                            收藏喜歡的組合，並在數位衣櫃中管理現有衣物，
+                            逐步建立自己的穿搭靈感資料庫。
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- ==============================
+         頁尾
+    ============================== -->
+    <footer class="footer">
+        <div class="container footer-inner">
+
+            <p>
+                <strong>FitMatch AI</strong>
+                · Find Your Style, Every Day.
+            </p>
+
+            <p>
+                本網站為互動式穿搭展示專案，推薦內容由預先設定的規則產生。
+            </p>
+
+        </div>
+    </footer>
+
+
+    <!-- 操作提示 -->
+    <div
+        class="toast"
+        id="toast"
+        role="status"
+        aria-live="polite"
+    ></div>
+
+
+    <script>
+        "use strict";
+
+        /* ==========================================
+           1. 基本設定與資料
+        ========================================== */
+
+        const STORAGE_KEYS = {
+            wardrobe: "fitmatch_wardrobe_v1",
+            favorites: "fitmatch_favorites_v1"
+        };
+
+        const STYLE_NAMES = {
+            casual: "休閒風",
+            korean: "韓系風",
+            minimal: "簡約風",
+            street: "街頭風"
+        };
+
+        const OCCASION_NAMES = {
+            school: "上課",
+            date: "約會",
+            dining: "朋友聚餐",
+            sport: "運動"
+        };
+
+        const CATEGORY_NAMES = {
+            top: "上衣",
+            pants: "褲子",
+            outerwear: "外套",
+            shoes: "鞋子",
+            accessory: "配件"
+        };
+
+        const CATEGORY_EMOJI = {
+            top: "👕",
+            pants: "👖",
+            outerwear: "🧥",
+            shoes: "👟",
+            accessory: "🧢"
+        };
+
+
+        /*
+         * 穿搭資料庫。
+         * 這是根據風格、場合與溫度設計的規則式推薦，
+         * 並非真正呼叫生成式 AI。
+         */
+        const OUTFITS = [
+            {
+                id: "casual-school",
+                style: "casual",
+                occasions: ["school", "dining"],
+                name: "日常清爽系",
+                top: "素色棉質 T 恤",
+                topEmoji: "👕",
+                pants: "直筒休閒長褲",
+                pantsEmoji: "👖",
+                outer: "薄款襯衫外套",
+                outerEmoji: "🧥",
+                shoes: "簡約休閒鞋",
+                shoesEmoji: "👟",
+                accessory: "帆布包",
+                accessoryEmoji: "👜",
+                description: "以舒適的基礎單品為主，簡單搭配就能呈現自然、乾淨的日常感。",
+                tip: "可以利用白色、灰色或大地色系增加整體的協調感。"
+            },
+            {
+                id: "casual-date",
+                style: "casual",
+                occasions: ["date", "dining"],
+                name: "輕鬆約會系",
+                top: "寬鬆版型上衣",
+                topEmoji: "👕",
+                pants: "卡其休閒褲",
+                pantsEmoji: "👖",
+                outer: "休閒襯衫外套",
+                outerEmoji: "🧥",
+                shoes: "低筒休閒鞋",
+                shoesEmoji: "👟",
+                accessory: "簡約手錶",
+                accessoryEmoji: "⌚",
+                description: "保留休閒感，同時透過俐落的褲型與配件，讓整體看起來更有精神。",
+                tip: "上衣與褲子可以選擇相近的色系，讓視覺更加一致。"
+            },
+            {
+                id: "korean-school",
+                style: "korean",
+                occasions: ["school", "dining"],
+                name: "韓系校園感",
+                top: "寬版淺色襯衫",
+                topEmoji: "👔",
+                pants: "深色直筒長褲",
+                pantsEmoji: "👖",
+                outer: "針織開襟外套",
+                outerEmoji: "🧥",
+                shoes: "復古休閒鞋",
+                shoesEmoji: "👟",
+                accessory: "簡約斜背包",
+                accessoryEmoji: "🎒",
+                description: "以寬鬆版型和柔和配色呈現韓系日常風格，適合上課與朋友聚會。",
+                tip: "淺色上衣搭配深色下身，可以讓整體層次更加清楚。"
+            },
+            {
+                id: "korean-date",
+                style: "korean",
+                occasions: ["date", "dining"],
+                name: "韓系簡約約會",
+                top: "細緻針織上衣",
+                topEmoji: "👕",
+                pants: "垂墜感長褲",
+                pantsEmoji: "👖",
+                outer: "短版俐落外套",
+                outerEmoji: "🧥",
+                shoes: "簡潔皮革休閒鞋",
+                shoesEmoji: "👞",
+                accessory: "銀色項鍊",
+                accessoryEmoji: "📿",
+                description: "以簡單的層次和細節呈現整潔感，適合約會或比較正式的聚餐。",
+                tip: "配件不需要太多，選一件簡單的飾品就能增加整體細節。"
+            },
+            {
+                id: "minimal-school",
+                style: "minimal",
+                occasions: ["school", "dining"],
+                name: "極簡日常系",
+                top: "純色短袖上衣",
+                topEmoji: "👕",
+                pants: "黑色直筒長褲",
+                pantsEmoji: "👖",
+                outer: "簡約薄外套",
+                outerEmoji: "🧥",
+                shoes: "白色休閒鞋",
+                shoesEmoji: "👟",
+                accessory: "簡約托特包",
+                accessoryEmoji: "👜",
+                description: "透過黑、白、灰等基本色打造容易搭配的造型，簡單卻不失整體感。",
+                tip: "全身可以控制在兩到三種主要顏色，搭配起來更容易協調。"
+            },
+            {
+                id: "minimal-date",
+                style: "minimal",
+                occasions: ["date", "dining"],
+                name: "俐落都會系",
+                top: "素色長袖上衣",
+                topEmoji: "👕",
+                pants: "西裝感休閒長褲",
+                pantsEmoji: "👖",
+                outer: "簡潔剪裁外套",
+                outerEmoji: "🧥",
+                shoes: "素面休閒鞋",
+                shoesEmoji: "👟",
+                accessory: "簡約腕錶",
+                accessoryEmoji: "⌚",
+                description: "使用乾淨的線條與低彩度單品，讓日常穿搭更有都會感。",
+                tip: "注意衣服的整潔度與褲長，簡單的單品也能呈現俐落效果。"
+            },
+            {
+                id: "street-school",
+                style: "street",
+                occasions: ["school", "dining"],
+                name: "街頭休閒系",
+                top: "寬版印花 T 恤",
+                topEmoji: "👕",
+                pants: "寬版工裝長褲",
+                pantsEmoji: "👖",
+                outer: "輕量連帽外套",
+                outerEmoji: "🧥",
+                shoes: "復古運動鞋",
+                shoesEmoji: "👟",
+                accessory: "棒球帽",
+                accessoryEmoji: "🧢",
+                description: "透過寬鬆輪廓、工裝元素與運動鞋，呈現自在且有個性的街頭感。",
+                tip: "如果上衣有明顯圖案，下身可以選擇素色，避免視覺過於複雜。"
+            },
+            {
+                id: "street-date",
+                style: "street",
+                occasions: ["date", "dining"],
+                name: "都會街頭系",
+                top: "素色寬版上衣",
+                topEmoji: "👕",
+                pants: "深色工裝褲",
+                pantsEmoji: "👖",
+                outer: "短版飛行外套",
+                outerEmoji: "🧥",
+                shoes: "高筒休閒鞋",
+                shoesEmoji: "👟",
+                accessory: "簡約銀色配件",
+                accessoryEmoji: "🕶️",
+                description: "以工裝褲和俐落外套建立造型重點，適合喜歡個性風格的人。",
+                tip: "讓外套或鞋子成為視覺重點，其他單品就維持簡單配色。"
+            },
+            {
+                id: "sport-basic",
+                style: "casual",
+                occasions: ["sport"],
+                name: "輕量運動系",
+                top: "透氣運動上衣",
+                topEmoji: "👕",
+                pants: "運動長褲",
+                pantsEmoji: "👖",
+                outer: "輕量運動外套",
+                outerEmoji: "🧥",
+                shoes: "運動鞋",
+                shoesEmoji: "👟",
+                accessory: "運動帽",
+                accessoryEmoji: "🧢",
+                description: "以透氣、方便活動的單品為主，適合日常活動或輕度運動。",
+                tip: "運動時以舒適度與活動方便性為優先，並依實際天氣調整衣物。"
+            },
+            {
+                id: "sport-street",
+                style: "street",
+                occasions: ["sport"],
+                name: "街頭運動系",
+                top: "寬鬆排汗上衣",
+                topEmoji: "👕",
+                pants: "機能運動長褲",
+                pantsEmoji: "👖",
+                outer: "輕量防風外套",
+                outerEmoji: "🧥",
+                shoes: "運動訓練鞋",
+                shoesEmoji: "👟",
+                accessory: "運動斜背包",
+                accessoryEmoji: "🎒",
+                description: "結合運動單品與街頭風格，適合日常活動及休閒場合。",
+                tip: "選擇方便活動的衣物，並依運動強度與天氣調整穿著。"
+            },
+            {
+                id: "korean-sport",
+                style: "korean",
+                occasions: ["sport"],
+                name: "韓系運動休閒",
+                top: "簡約運動上衣",
+                topEmoji: "👕",
+                pants: "直筒運動長褲",
+                pantsEmoji: "👖",
+                outer: "拉鍊運動外套",
+                outerEmoji: "🧥",
+                shoes: "輕量運動鞋",
+                shoesEmoji: "👟",
+                accessory: "簡約運動包",
+                accessoryEmoji: "🎒",
+                description: "使用簡單配色和俐落運動單品，打造輕鬆自然的運動休閒風格。",
+                tip: "可以選擇相近色系，讓整套運動服裝看起來更有一致性。"
+            },
+            {
+                id: "minimal-sport",
+                style: "minimal",
+                occasions: ["sport"],
+                name: "極簡機能系",
+                top: "素色排汗上衣",
+                topEmoji: "👕",
+                pants: "機能運動長褲",
+                pantsEmoji: "👖",
+                outer: "薄款運動外套",
+                outerEmoji: "🧥",
+                shoes: "簡約運動鞋",
+                shoesEmoji: "👟",
+                accessory: "輕便運動包",
+                accessoryEmoji: "🎒",
+                description: "以低彩度與實用性為重點，適合喜歡簡單、乾淨運動穿搭的人。",
+                tip: "選擇輕量且容易活動的衣物，讓穿搭兼顧實用與簡潔。"
+            }
+        ];
+
+
+        /* ==========================================
+           2. 狀態與 localStorage
+        ========================================== */
+
+        let wardrobe = [];
+        let favorites = [];
+        let currentOutfit = null;
+        let toastTimer = null;
+        let storageAvailable = true;
+
+
+        /*
+         * 安全讀取 localStorage。
+         * 如果瀏覽器不允許儲存或資料格式錯誤，
+         * 就使用預設空陣列，避免網站因此停止運作。
+         */
+        function loadData(key) {
+            try {
+                const raw = localStorage.getItem(key);
+
+                if (raw === null) {
+                    return [];
+                }
+
+                const parsed = JSON.parse(raw);
+
+                if (!Array.isArray(parsed)) {
+                    return [];
+                }
+
+                return parsed;
+
+            } catch (error) {
+                storageAvailable = false;
+                console.warn("讀取本機資料失敗：", error);
+                return [];
+            }
+        }
+
+
+        /*
+         * 安全儲存資料。
+         * 回傳 true 代表儲存成功，false 代表失敗。
+         */
+        function saveData(key, data) {
+            try {
+                localStorage.setItem(key, JSON.stringify(data));
+                return true;
+
+            } catch (error) {
+                storageAvailable = false;
+                console.error("儲存本機資料失敗：", error);
+                showToast(
+                    "資料無法儲存，請檢查瀏覽器儲存設定。",
+                    true
+                );
+                return false;
+            }
+        }
+
+
+        function saveWardrobe() {
+            return saveData(STORAGE_KEYS.wardrobe, wardrobe);
+        }
+
+
+        function saveFavorites() {
+            return saveData(STORAGE_KEYS.favorites, favorites);
+        }
+
+
+        /* ==========================================
+           3. 常用工具函式
+        ========================================== */
+
+        function escapeHTML(value) {
+            return String(value).replace(/[&<>"']/g, function (char) {
+                const entities = {
+                    "&": "&amp;",
+                    "<": "&lt;",
+                    ">": "&gt;",
+                    '"': "&quot;",
+                    "'": "&#39;"
+                };
+
+                return entities[char];
+            });
+        }
+
+
+        function createId() {
+            if (
+                typeof crypto !== "undefined" &&
+                typeof crypto.randomUUID === "function"
+            ) {
+                return crypto.randomUUID();
+            }
+
+            return (
+                Date.now().toString(36) +
+                Math.random().toString(36).slice(2, 11)
+            );
+        }
+
+
+        function randomItem(array) {
+            return array[Math.floor(Math.random() * array.length)];
+        }
+
+
+        function showToast(message, isError = false) {
+            const toast = document.getElementById("toast");
+
+            toast.textContent = message;
+            toast.classList.toggle("error", isError);
+            toast.classList.add("show");
+
+            clearTimeout(toastTimer);
+
+            toastTimer = setTimeout(function () {
+                toast.classList.remove("show");
+            }, 2600);
+        }
+
+
+        function getTemperatureAdvice(temperature) {
+            if (temperature < 10) {
+                return {
+                    label: "低溫穿搭",
+                    outer: "保暖外套",
+                    emoji: "🧥",
+                    tip: "氣溫偏低，建議增加保暖層次。可搭配長袖、保暖外套，並依實際體感調整。"
+                };
+            }
+
+            if (temperature < 18) {
+                return {
+                    label: "微涼穿搭",
+                    outer: "薄針織外套",
+                    emoji: "🧶",
+                    tip: "天氣微涼，可以使用長袖上衣搭配薄外套，方便依室內外溫差增減衣物。"
+                };
+            }
+
+            if (temperature < 25) {
+                return {
+                    label: "舒適穿搭",
+                    outer: "輕薄外套",
+                    emoji: "🧥",
+                    tip: "氣溫較舒適，可選擇長袖或短袖搭配輕薄外套，依早晚溫差調整。"
+                };
+            }
+
+            if (temperature < 30) {
+                return {
+                    label: "清爽穿搭",
+                    outer: "透氣薄襯衫",
+                    emoji: "👔",
+                    tip: "氣溫偏暖，建議選擇透氣、輕薄的衣物；外套可以視需要攜帶。"
+                };
+            }
+
+            return {
+                label: "炎熱穿搭",
+                outer: "防曬薄外套",
+                emoji: "☀️",
+                tip: "氣溫炎熱，建議選擇透氣、輕薄的衣物，並注意補充水分及做好防曬。"
+            };
+        }
+
+
+        /* ==========================================
+           4. 穿搭推薦邏輯
+        ========================================== */
+
+        function getOutfit(style, occasion, temperature, randomMode = false) {
+
+            /*
+             * 第一步：根據場合篩選。
+             * 運動場合會優先使用運動穿搭。
+             */
+            let candidates = OUTFITS.filter(function (outfit) {
+                return outfit.occasions.includes(occasion);
+            });
+
+
+            /*
+             * 第二步：根據風格篩選。
+             */
+            const styleMatches = candidates.filter(function (outfit) {
+                return outfit.style === style;
+            });
+
+            if (styleMatches.length > 0) {
+                candidates = styleMatches;
+            }
+
+
+            /*
+             * 第三步：選擇一套穿搭。
+             * 隨機模式優先從所有符合條件的組合中選擇。
+             */
+            const chosen = randomItem(candidates);
+
+
+            /*
+             * 第四步：根據溫度調整外套與建議。
+             */
+            const temperatureAdvice = getTemperatureAdvice(temperature);
+
+            const outfit = {
+                id: chosen.id,
+                style: STYLE_NAMES[style],
+                styleKey: style,
+                occasion: OCCASION_NAMES[occasion],
+                occasionKey: occasion,
+                temperature: temperature,
+                name: chosen.name,
+                top: chosen.top,
+                topEmoji: chosen.topEmoji,
+                pants: chosen.pants,
+                pantsEmoji: chosen.pantsEmoji,
+                outer: chosen.outer,
+                outerEmoji: chosen.outerEmoji,
+                shoes: chosen.shoes,
+                shoesEmoji: chosen.shoesEmoji,
+                accessory: chosen.accessory,
+                accessoryEmoji: chosen.accessoryEmoji,
+                description: chosen.description,
+                temperatureLabel: temperatureAdvice.label,
+                temperatureTip: temperatureAdvice.tip,
+                temperatureOuter: temperatureAdvice.outer,
+                temperatureEmoji: temperatureAdvice.emoji,
+                randomMode: randomMode,
+                createdAt: Date.now()
+            };
+
+
+            /*
+             * 根據氣溫改變主要搭配。
+             * 運動場合則保留運動服裝的實用性。
+             */
+            if (temperature >= 30) {
+                outfit.top = "透氣輕薄上衣";
+                outfit.topEmoji = "👕";
+                outfit.outer = "防曬薄外套（視需要）";
+                outfit.outerEmoji = "🌤️";
+
+            } else if (temperature >= 25) {
+                outfit.top = chosen.top;
+                outfit.outer = "輕薄外套（視需要）";
+                outfit.outerEmoji = "🧥";
+
+            } else if (temperature < 18) {
+                outfit.outer = temperatureAdvice.outer;
+                outfit.outerEmoji = temperatureAdvice.emoji;
+
+                if (temperature < 10) {
+                    outfit.top = "保暖長袖上衣";
+                    outfit.topEmoji = "🧶";
+                }
+            }
+
+
+            if (occasion === "sport") {
+                outfit.tip =
+                    temperatureAdvice.tip +
+                    " 運動時請優先考量舒適度與活動方便性。";
+            } else {
+                outfit.tip =
+                    temperatureAdvice.tip +
+                    " " +
+                    chosen.tip;
+            }
+
+
+            if (randomMode) {
+                outfit.description =
+                    "這次為你隨機挑選了「" +
+                    outfit.name +
+                    "」，可以把它當作今天的穿搭靈感，也可以再次抽選其他組合。";
+            }
+
+            return outfit;
+        }
+
+
+        /* ==========================================
+           5. 顯示穿搭結果
+        ========================================== */
+
+        function renderOutfit(outfit) {
+            const panel = document.getElementById("resultPanel");
+
+            currentOutfit = outfit;
+
+            const safeName = escapeHTML(outfit.name);
+            const safeStyle = escapeHTML(outfit.style);
+            const safeOccasion = escapeHTML(outfit.occasion);
+            const safeDescription = escapeHTML(outfit.description);
+            const safeTip = escapeHTML(outfit.tip);
+
+            const alreadySaved = favorites.some(function (favorite) {
+                return favorite.id === outfit.id &&
+                    favorite.styleKey === outfit.styleKey &&
+                    favorite.occasionKey === outfit.occasionKey &&
+                    favorite.temperature === outfit.temperature &&
+                    favorite.name === outfit.name;
+            });
+
+            panel.innerHTML = `
+                <div class="result-top">
+                    <h3>✨ 為你推薦</h3>
+                    <span class="status-badge">
+                        ${escapeHTML(outfit.temperatureLabel)}
+                    </span>
+                </div>
+
+                <div class="result-hero">
+
+                    <div class="outfit-piece">
+                        <div class="piece-emoji">
+                            ${escapeHTML(outfit.topEmoji)}
+                        </div>
+                        <span class="piece-label">TOP 上衣</span>
+                        <span class="piece-name">
+                            ${escapeHTML(outfit.top)}
+                        </span>
+                    </div>
+
+                    <div class="outfit-piece">
+                        <div class="piece-emoji">
+                            ${escapeHTML(outfit.pantsEmoji)}
+                        </div>
+                        <span class="piece-label">BOTTOM 下身</span>
+                        <span class="piece-name">
+                            ${escapeHTML(outfit.pants)}
+                        </span>
+                    </div>
+
+                    <div class="outfit-piece">
+                        <div class="piece-emoji">
+                            ${escapeHTML(outfit.outerEmoji)}
+                        </div>
+                        <span class="piece-label">LAYER 外搭</span>
+                        <span class="piece-name">
+                            ${escapeHTML(outfit.outer)}
+                        </span>
+                    </div>
+
+                </div>
+
+                <div class="outfit-name">${safeName}</div>
+
+                <p class="outfit-description">
+                    ${safeDescription}
+                </p>
+
+                <div class="tip-box">
+                    <span class="tip-title">
+                        💡 今日穿搭小建議
+                    </span>
+                    <p class="tip-text">${safeTip}</p>
+                </div>
+
+                <div class="result-top" style="margin-bottom: 15px;">
+                    <span class="section-description">
+                        ${safeStyle} · ${safeOccasion} · ${outfit.temperature}°C
+                    </span>
+                </div>
+
+                <div class="result-actions">
+
+                    <button
+                        type="button"
+                        class="btn btn-primary"
+                        id="saveOutfitBtn"
+                        ${alreadySaved ? "disabled" : ""}
+                    >
+                        ${alreadySaved ? "✓ 已收藏" : "♡ 收藏穿搭"}
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        id="tryAgainBtn"
+                    >
+                        🎲 再換一套
+                    </button>
+
+                </div>
+            `;
+
+
+            document.getElementById("saveOutfitBtn").addEventListener(
+                "click",
+                saveCurrentOutfit
+            );
+
+            document.getElementById("tryAgainBtn").addEventListener(
+                "click",
+                randomizeOutfit
+            );
+        }
+
+
+        function recommendFromForm() {
+            const style = document.getElementById("style").value;
+            const occasion = document.getElementById("occasion").value;
+            const temperatureInput =
+                document.getElementById("temperature");
+
+            const temperature = temperatureInput.valueAsNumber;
+
+
+            if (!Number.isFinite(temperature)) {
+                showToast("請輸入今天的氣溫。", true);
+                temperatureInput.focus();
+                return;
+            }
+
+            if (temperature < -30 || temperature > 60) {
+                showToast("氣溫請輸入 -30°C 至 60°C 之間的數字。", true);
+                temperatureInput.focus();
+                return;
+            }
+
+
+            const outfit = getOutfit(
+                style,
+                occasion,
+                temperature,
+                false
+            );
+
+            renderOutfit(outfit);
+            showToast("已根據你的條件產生穿搭建議！");
+        }
+
+
+        function randomizeOutfit() {
+            const styleSelect = document.getElementById("style");
+            const occasionSelect = document.getElementById("occasion");
+            const temperatureInput =
+                document.getElementById("temperature");
+
+            const styles = Object.keys(STYLE_NAMES);
+            const occasions = Object.keys(OCCASION_NAMES);
+
+            const style = randomItem(styles);
+            const occasion = randomItem(occasions);
+
+            const rawTemperature = temperatureInput.valueAsNumber;
+
+            const temperature = Number.isFinite(rawTemperature) &&
+                rawTemperature >= -30 &&
+                rawTemperature <= 60
+                ? rawTemperature
+                : 25;
+
+
+            /*
+             * 同步表單內容，讓使用者知道本次隨機條件。
+             */
+            styleSelect.value = style;
+            occasionSelect.value = occasion;
+            temperatureInput.value = temperature;
+
+
+            const outfit = getOutfit(
+                style,
+                occasion,
+                temperature,
+                true
+            );
+
+            renderOutfit(outfit);
+            showToast("🎲 隨機穿搭已更新！");
+        }
+
+
+        /* ==========================================
+           6. 收藏功能
+        ========================================== */
+
+        function saveCurrentOutfit() {
+            if (!currentOutfit) {
+                showToast("請先產生一套穿搭。", true);
+                return;
+            }
+
+            const alreadySaved = favorites.some(function (favorite) {
+                return favorite.id === currentOutfit.id &&
+                    favorite.styleKey === currentOutfit.styleKey &&
+                    favorite.occasionKey === currentOutfit.occasionKey &&
+                    favorite.temperature === currentOutfit.temperature &&
+                    favorite.name === currentOutfit.name;
+            });
+
+            if (alreadySaved) {
+                showToast("這套穿搭已經收藏過了！");
+                return;
+            }
+
+
+            const newFavorite = {
+                ...currentOutfit,
+                favoriteId: createId(),
+                savedAt: Date.now()
+            };
+
+
+            favorites.unshift(newFavorite);
+
+
+            if (!saveFavorites()) {
+                favorites.shift();
+                return;
+            }
+
+
+            renderFavorites();
+            renderOutfit(currentOutfit);
+            updateStats();
+
+            showToast("❤️ 已收藏這套穿搭！");
+        }
+
+
+        function removeFavorite(favoriteId) {
+            const index = favorites.findIndex(function (favorite) {
+                return favorite.favoriteId === favoriteId;
+            });
+
+            if (index === -1) {
+                showToast("找不到這筆收藏資料。", true);
+                return;
+            }
+
+
+            const removed = favorites.splice(index, 1)[0];
+
+
+            if (!saveFavorites()) {
+                favorites.splice(index, 0, removed);
+                return;
+            }
+
+
+            renderFavorites();
+            updateStats();
+
+            if (currentOutfit) {
+                renderOutfit(currentOutfit);
+            }
+
+            showToast("已取消收藏。");
+        }
+
+
+        function loadFavorite(favoriteId) {
+            const favorite = favorites.find(function (item) {
+                return item.favoriteId === favoriteId;
+            });
+
+            if (!favorite) {
+                showToast("找不到這套穿搭。", true);
+                return;
+            }
+
+
+            document.getElementById("style").value =
+                favorite.styleKey;
+
+            document.getElementById("occasion").value =
+                favorite.occasionKey;
+
+            document.getElementById("temperature").value =
+                favorite.temperature;
+
+
+            renderOutfit(favorite);
+
+            document.getElementById("recommend").scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+            showToast("已載入收藏的穿搭！");
+        }
+
+
+        function renderFavorites() {
+            const list = document.getElementById("favoritesList");
+
+            document.getElementById("favoriteCount").textContent =
+                favorites.length + " 套收藏";
+
+            if (favorites.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">💌</div>
+                        <p>
+                            還沒有收藏任何穿搭，先去探索一套喜歡的搭配吧！
+                        </p>
+                    </div>
+                `;
+
+                return;
+            }
+
+
+            list.innerHTML = favorites.map(function (favorite) {
+
+                return `
+                    <article class="favorite-card">
+
+                        <div class="favorite-visual">
+
+                            <div class="favorite-visual-piece">
+                                ${escapeHTML(favorite.topEmoji)}
+                            </div>
+
+                            <div class="favorite-visual-piece">
+                                ${escapeHTML(favorite.pantsEmoji)}
+                            </div>
+
+                            <div class="favorite-visual-piece">
+                                ${escapeHTML(favorite.outerEmoji)}
+                            </div>
+
+                        </div>
+
+                        <div class="favorite-body">
+
+                            <h3 class="favorite-title">
+                                ${escapeHTML(favorite.name)}
+                            </h3>
+
+                            <p class="favorite-meta">
+                                ${escapeHTML(favorite.style)}
+                                · ${escapeHTML(favorite.occasion)}
+                                <br>
+                                ${favorite.temperature}°C
+                                · ${escapeHTML(favorite.temperatureLabel)}
+                            </p>
+
+                            <div class="favorite-actions">
+
+                                <button
+                                    type="button"
+                                    class="btn btn-primary btn-small"
+                                    data-action="load"
+                                    data-id="${escapeHTML(favorite.favoriteId)}"
+                                >
+                                    查看穿搭
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="btn btn-danger btn-small"
+                                    data-action="remove"
+                                    data-id="${escapeHTML(favorite.favoriteId)}"
+                                >
+                                    取消收藏
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+                `;
+
+            }).join("");
+        }
+
+
+        /* ==========================================
+           7. 衣櫃管理
+        ========================================== */
+
+        function addClothing(event) {
+            event.preventDefault();
+
+            const nameInput = document.getElementById("clothingName");
+            const categoryInput =
+                document.getElementById("clothingCategory");
+
+            const name = nameInput.value.trim();
+            const category = categoryInput.value;
+
+
+            if (!name) {
+                showToast("請先輸入衣物名稱。", true);
+                nameInput.focus();
+                return;
+            }
+
+            if (name.length > 40) {
+                showToast("衣物名稱不能超過 40 個字。", true);
+                return;
+            }
+
+            if (!Object.prototype.hasOwnProperty.call(
+                CATEGORY_NAMES,
+                category
+            )) {
+                showToast("請選擇有效的衣物類別。", true);
+                return;
+            }
+
+
+            const newItem = {
+                id: createId(),
+                name: name,
+                category: category,
+                createdAt: Date.now()
+            };
+
+
+            wardrobe.unshift(newItem);
+
+
+            if (!saveWardrobe()) {
+                wardrobe.shift();
+                return;
+            }
+
+
+            renderWardrobe();
+            updateStats();
+
+            nameInput.value = "";
+            nameInput.focus();
+
+            showToast("👕 已新增「" + name + "」！");
+        }
+
+
+        function removeClothing(itemId) {
+            const index = wardrobe.findIndex(function (item) {
+                return item.id === itemId;
+            });
+
+            if (index === -1) {
+                showToast("找不到這件衣物。", true);
+                return;
+            }
+
+
+            const removed = wardrobe.splice(index, 1)[0];
+
+
+            if (!saveWardrobe()) {
+                wardrobe.splice(index, 0, removed);
+                return;
+            }
+
+
+            renderWardrobe();
+            updateStats();
+
+            showToast("已刪除「" + removed.name + "」。");
+        }
+
+
+        function renderWardrobe() {
+            const list = document.getElementById("closetList");
+
+            document.getElementById("closetCount").textContent =
+                wardrobe.length + " 件單品";
+
+
+            if (wardrobe.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🧺</div>
+                        <p>你的衣櫃還是空的，新增第一件衣物吧！</p>
+                    </div>
+                `;
+
+                return;
+            }
+
+
+            list.innerHTML = wardrobe.map(function (item) {
+
+                const categoryName =
+                    CATEGORY_NAMES[item.category] || "其他";
+
+                const categoryEmoji =
+                    CATEGORY_EMOJI[item.category] || "👕";
+
+
+                return `
+                    <div class="closet-item">
+
+                        <div class="closet-item-icon">
+                            ${categoryEmoji}
+                        </div>
+
+                        <div class="closet-item-info">
+
+                            <div class="closet-item-name">
+                                ${escapeHTML(item.name)}
+                            </div>
+
+                            <p class="closet-item-category">
+                                ${escapeHTML(categoryName)}
+                            </p>
+
+                        </div>
+
+                        <button
+                            type="button"
+                            class="delete-btn"
+                            data-id="${escapeHTML(item.id)}"
+                            aria-label="刪除 ${escapeHTML(item.name)}"
+                            title="刪除衣物"
+                        >
+                            ✕
+                        </button>
+
+                    </div>
+                `;
+
+            }).join("");
+        }
+
+
+        /* ==========================================
+           8. 更新首頁統計
+        ========================================== */
+
+        function updateStats() {
+            document.getElementById("statClothes").textContent =
+                wardrobe.length;
+
+            document.getElementById("statFavorites").textContent =
+                favorites.length;
+
+            document.getElementById("closetCount").textContent =
+                wardrobe.length + " 件單品";
+
+            document.getElementById("favoriteCount").textContent =
+                favorites.length + " 套收藏";
+        }
+
+
+        /* ==========================================
+           9. 事件綁定
+        ========================================== */
+
+        function bindEvents() {
+
+            /*
+             * 提交穿搭條件。
+             */
+            document.getElementById("recommendForm").addEventListener(
+                "submit",
+                function (event) {
+                    event.preventDefault();
+                    recommendFromForm();
+                }
+            );
+
+
+            /*
+             * 隨機穿搭。
+             */
+            document.getElementById("randomBtn").addEventListener(
+                "click",
+                randomizeOutfit
+            );
+
+
+            /*
+             * 新增衣物。
+             */
+            document.getElementById("closetForm").addEventListener(
+                "submit",
+                addClothing
+            );
+
+
+            /*
+             * 衣櫃刪除按鈕。
+             * 使用事件委派處理動態產生的按鈕。
+             */
+            document.getElementById("closetList").addEventListener(
+                "click",
+                function (event) {
+                    const button = event.target.closest(".delete-btn");
+
+                    if (!button) {
+                        return;
+                    }
+
+                    removeClothing(button.dataset.id);
+                }
+            );
+
+
+            /*
+             * 收藏區的查看與取消收藏按鈕。
+             */
+            document.getElementById("favoritesList").addEventListener(
+                "click",
+                function (event) {
+
+                    const button = event.target.closest("button");
+
+                    if (!button) {
+                        return;
+                    }
+
+                    const favoriteId = button.dataset.id;
+                    const action = button.dataset.action;
+
+
+                    if (action === "load") {
+                        loadFavorite(favoriteId);
+                    }
+
+                    if (action === "remove") {
+                        removeFavorite(favoriteId);
+                    }
+
+                }
+            );
+        }
+
+
+        /* ==========================================
+           10. 網站初始化
+        ========================================== */
+
+        function init() {
+
+            /*
+             * 讀取之前儲存的資料。
+             */
+            wardrobe = loadData(STORAGE_KEYS.wardrobe);
+            favorites = loadData(STORAGE_KEYS.favorites);
+
+
+            /*
+             * 清理格式不正確的舊資料。
+             */
+            wardrobe = wardrobe.filter(function (item) {
+                return item &&
+                    typeof item.id === "string" &&
+                    typeof item.name === "string" &&
+                    Object.prototype.hasOwnProperty.call(
+                        CATEGORY_NAMES,
+                        item.category
+                    );
+            });
+
+            favorites = favorites.filter(function (favorite) {
+                return favorite &&
+                    typeof favorite.favoriteId === "string" &&
+                    typeof favorite.name === "string" &&
+                    Object.prototype.hasOwnProperty.call(
+                        STYLE_NAMES,
+                        favorite.styleKey
+                    ) &&
+                    Object.prototype.hasOwnProperty.call(
+                        OCCASION_NAMES,
+                        favorite.occasionKey
+                    ) &&
+                    Number.isFinite(favorite.temperature);
+            });
+
+
+            /*
+             * 綁定互動事件。
+             */
+            bindEvents();
+
+
+            /*
+             * 顯示衣櫃與收藏。
+             */
+            renderWardrobe();
+            renderFavorites();
+            updateStats();
+
+
+            /*
+             * 如果 localStorage 無法正常使用，
+             * 顯示提醒，但仍允許使用者操作網站。
+             */
+            if (!storageAvailable) {
+                showToast(
+                    "目前無法讀取部分本機資料，重新整理後可能無法保留變更。",
+                    true
+                );
+            }
+        }
+
+
+        /*
+         * 網頁載入後執行初始化。
+         */
+        document.addEventListener("DOMContentLoaded", init);
+
+    </script>
+
+</body>
+</html>
